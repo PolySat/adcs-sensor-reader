@@ -44,7 +44,6 @@ struct MulticallInfo {
 
 static int adcs_status(int argc, char **argv, struct MulticallInfo * self) 
 {
-   // struct to hold response from payload process
    struct {
       uint8_t cmd;
       struct ADCSReaderStatus status;
@@ -67,7 +66,7 @@ static int adcs_status(int argc, char **argv, struct MulticallInfo * self)
    }
    
    // send packet and wait for response
-   if ((len = socket_send_packet_and_read_response(ip, "payload", &send, 
+   if ((len = socket_send_packet_and_read_response(ip, "adcs", &send, 
     sizeof(send), &resp, sizeof(resp), WAIT_MS)) <= 0) {
       return len;
    }
@@ -80,18 +79,18 @@ static int adcs_status(int argc, char **argv, struct MulticallInfo * self)
 
    // print out returned status values   
    printf("Accel X=%f [G]\n", ((int32_t)ntohl(resp.status.accel.x))
-                                              / 1024.0*1024.0*16.0);
+                                              / (1024.0*1024.0*16.0));
    printf("Accel Y=%f [G]\n", ((int32_t)ntohl(resp.status.accel.y))
-                                              / 1024.0*1024.0*16.0);
+                                              / (1024.0*1024.0*16.0));
    printf("Accel Z=%f [G]\n", ((int32_t)ntohl(resp.status.accel.z))
-                                              / 1024.0*1024.0*16.0);
+                                              / (1024.0*1024.0*16.0));
 
    printf("Gyro X=%f [d/s]\n", ((int32_t)ntohl(resp.status.gyro.x))
-                                              / 1024.0*1024.0);
+                                              / (1024.0*1024.0));
    printf("Gyro Y=%f [d/s]\n", ((int32_t)ntohl(resp.status.gyro.y))
-                                              / 1024.0*1024.0);
+                                              / (1024.0*1024.0));
    printf("Gyro Z=%f [d/s]\n", ((int32_t)ntohl(resp.status.gyro.z))
-                                              / 1024.0*1024.0);
+                                              / (1024.0*1024.0));
 
    printf("Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag.x));
    printf("Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag.y));
@@ -107,7 +106,6 @@ static int adcs_status(int argc, char **argv, struct MulticallInfo * self)
  */
 static int adcs_telemetry(int argc, char **argv, struct MulticallInfo * self) 
 {
-   // struct to hold response from payload process
    struct {
       uint8_t cmd;
       struct ADCSReaderStatus status;
@@ -130,7 +128,7 @@ static int adcs_telemetry(int argc, char **argv, struct MulticallInfo * self)
    }
    
    // send packet and wait for response
-   if ((len = socket_send_packet_and_read_response(ip, "payload", &send, 
+   if ((len = socket_send_packet_and_read_response(ip, "adcs", &send, 
     sizeof(send), &resp, sizeof(resp), WAIT_MS)) <= 0) {
       return len;
    }
