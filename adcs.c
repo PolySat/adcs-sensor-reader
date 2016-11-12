@@ -85,10 +85,18 @@ static void marshal_accel(struct SensorInfo *si, void *dst)
 {
    struct AccelerometerSensor *accel = (struct AccelerometerSensor*)si->sensor;
    struct ADCS3DData *ad = (struct ADCS3DData*)dst;
+   AccelData accelCache;
 
-   ad->x = htonl(accel->accelCache.x_result);
-   ad->y = htonl(accel->accelCache.y_result);
-   ad->z = htonl(accel->accelCache.z_result);
+   if (accel->read) {
+      accel->read(accel, &accelCache);
+
+      ad->x = htonl(accelCache.x_result);
+      ad->y = htonl(accelCache.y_result);
+      ad->z = htonl(accelCache.z_result);
+   }
+   // ad->x = htonl(accel->accelCache.x_result);
+   // ad->y = htonl(accel->accelCache.y_result);
+   // ad->z = htonl(accel->accelCache.z_result);
 }
 
 static void marshal_gyro(struct SensorInfo *si, void *dst)
