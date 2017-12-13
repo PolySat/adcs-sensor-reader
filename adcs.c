@@ -77,7 +77,13 @@ static void marshal_mag(struct SensorInfo *si, void *dst);
 struct SensorInfo sensors[] = {
    ACCEL_SENSOR("mb_accel", DEVICE_LOCATION_MB, accel),
    GYRO_SENSOR("mb_gyro", DEVICE_LOCATION_MB, gyro),
-   MAG_SENSOR("mb", DEVICE_LOCATION_MB, mag),
+   MAG_SENSOR("mb", DEVICE_LOCATION_MB, mag_mb),
+   MAG_SENSOR("Magnetometer", DEVICE_LOCATION_MINUS_Z, mag_nz),
+   MAG_SENSOR("Magnetometer", DEVICE_LOCATION_PLUS_Z, mag_pz),
+   MAG_SENSOR("Magnetometer", DEVICE_LOCATION_MINUS_Y, mag_ny),
+   MAG_SENSOR("Magnetometer", DEVICE_LOCATION_PLUS_Y, mag_py),
+   MAG_SENSOR("Magnetometer", DEVICE_LOCATION_MINUS_X, mag_nx),
+   MAG_SENSOR("Magnetometer", DEVICE_LOCATION_PLUS_X, mag_px),
    { NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0 }
 };
 

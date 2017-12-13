@@ -92,9 +92,33 @@ static int adcs_status(int argc, char **argv, struct MulticallInfo * self)
    printf("Gyro Z=%f [d/s]\n", ((int32_t)ntohl(resp.status.gyro.z))
                                               / (1024.0*1024.0));
 
-   printf("Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag.x));
-   printf("Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag.y));
-   printf("Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag.z));
+   printf("MB Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag_mb.x));
+   printf("MB Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag_mb.y));
+   printf("MB Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag_mb.z));
+
+   printf("-X Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag_nx.x));
+   printf("-X Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag_nx.y));
+   printf("-X Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag_nx.z));
+   
+   printf("+X Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag_px.x));
+   printf("+X Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag_px.y));
+   printf("+X Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag_px.z));
+   
+   printf("-Y Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag_ny.x));
+   printf("-Y Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag_ny.y));
+   printf("-Y Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag_ny.z));
+   
+   printf("+Y Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag_py.x));
+   printf("+Y Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag_py.y));
+   printf("+Y Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag_py.z));
+   
+   printf("-Z Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag_nz.x));
+   printf("-Z Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag_nz.y));
+   printf("-Z Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag_nz.z));
+   
+   printf("+Z Mag X=%d [nT]\n", (int32_t)ntohl(resp.status.mag_pz.x));
+   printf("+Z Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag_pz.y));
+   printf("+Z Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag_pz.z));
    
    return 0;
 }
@@ -146,9 +170,27 @@ static int adcs_telemetry(int argc, char **argv, struct MulticallInfo * self)
    printf("gyro_x=%d\n", (int32_t)ntohl(resp.status.gyro.x));
    printf("gyro_y=%d\n", (int32_t)ntohl(resp.status.gyro.y));
    printf("gyro_z=%d\n", (int32_t)ntohl(resp.status.gyro.z));
-   printf("mag_x=%d\n", (int32_t)ntohl(resp.status.mag.x));
-   printf("mag_y=%d\n", (int32_t)ntohl(resp.status.mag.y));
-   printf("mag_z=%d\n", (int32_t)ntohl(resp.status.mag.z));
+   printf("mb_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_mb.x));
+   printf("mb_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_mb.y));
+   printf("mb_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_mb.z));
+   printf("nz_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_nz.x));
+   printf("nz_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_nz.y));
+   printf("nz_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_nz.z));
+   printf("pz_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_pz.x));
+   printf("pz_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_pz.y));
+   printf("pz_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_pz.z));
+   printf("ny_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_ny.x));
+   printf("ny_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_ny.y));
+   printf("ny_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_ny.z));
+   printf("py_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_py.x));
+   printf("py_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_py.y));
+   printf("py_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_py.z));
+   printf("nx_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_nx.x));
+   printf("nx_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_nx.y));
+   printf("nx_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_nx.z));
+   printf("px_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_px.x));
+   printf("px_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_px.y));
+   printf("px_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_px.z));
    
    return 0;
 }

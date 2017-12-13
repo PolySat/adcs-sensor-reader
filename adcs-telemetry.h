@@ -10,7 +10,13 @@ struct ADCS3DData {
 struct ADCSReaderStatus {
    struct ADCS3DData accel;
    struct ADCS3DData gyro;
-   struct ADCS3DData mag;
+   struct ADCS3DData mag_mb;
+   struct ADCS3DData mag_nx;
+   struct ADCS3DData mag_px;
+   struct ADCS3DData mag_ny;
+   struct ADCS3DData mag_py;
+   struct ADCS3DData mag_nz;
+   struct ADCS3DData mag_pz;
 } __attribute__((packed));
 
 #endif
