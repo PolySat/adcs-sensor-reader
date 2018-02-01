@@ -234,7 +234,7 @@ int main(int argc, char *argv[])
    gState = &adcs;
 
    // Initialize the process
-   adcs.proc = PROC_init("adcs");
+   adcs.proc = PROC_init("adcs", WD_ENABLED);
    if (!adcs.proc)
       return -1;
 
