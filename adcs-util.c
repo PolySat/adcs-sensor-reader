@@ -170,9 +170,9 @@ static int adcs_telemetry(int argc, char **argv, struct MulticallInfo * self)
    printf("gyro_x=%d\n", (int32_t)ntohl(resp.status.gyro.x));
    printf("gyro_y=%d\n", (int32_t)ntohl(resp.status.gyro.y));
    printf("gyro_z=%d\n", (int32_t)ntohl(resp.status.gyro.z));
-   printf("mb_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_mb.x));
-   printf("mb_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_mb.y));
-   printf("mb_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_mb.z));
+   printf("mag_x=%d\n", (int32_t)ntohl(resp.status.mag_mb.x));
+   printf("mag_y=%d\n", (int32_t)ntohl(resp.status.mag_mb.y));
+   printf("mag_z=%d\n", (int32_t)ntohl(resp.status.mag_mb.z));
    printf("nz_mag_x=%d\n", (int32_t)ntohl(resp.status.mag_nz.x));
    printf("nz_mag_y=%d\n", (int32_t)ntohl(resp.status.mag_nz.y));
    printf("nz_mag_z=%d\n", (int32_t)ntohl(resp.status.mag_nz.z));
