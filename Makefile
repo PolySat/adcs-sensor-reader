@@ -1,6 +1,6 @@
 include Make.rules.arm
 
-override LDFLAGS+=-rdynamic -lproc -lsatpkt -lpolydrivers -lm -ldl -lrt -lpthread
+override LDFLAGS+=-rdynamic -lproc -lsatpkt -lpolydrivers -lm -ldl -lrt -lpthread -lz
 override CFLAGS+=-Wall -pedantic -std=gnu99 -g -lpthread
 
 SRC=adcs.c
@@ -17,7 +17,7 @@ $(EXECUTABLE): $(OBJS)
 	$(STRIP) $@
 
 adcs-util: adcs-util.c
-	$(CC) $(CFLAGS) $< -lproc -lsatpkt -ldl -o $@
+	$(CC) $(CFLAGS) $< -lproc -lsatpkt -ldl -lz -o $@
 	$(STRIP) $@
 
 install: $(EXECUTABLE) $(CMDS)
@@ -25,6 +25,9 @@ install: $(EXECUTABLE) $(CMDS)
 	cp -f $(CMDS) $(INSTALL_DEST)
 	ln -sf adcs-util $(INSTALL_DEST)/adcs-status
 	ln -sf adcs-util $(INSTALL_DEST)/adcs-telemetry
+	ln -sf adcs-util $(INSTALL_DEST)/adcs-get-cs
+	ln -sf adcs-util $(INSTALL_DEST)/adcs-set-cs
+	ln -sf adcs-util $(INSTALL_DEST)/adcs-read-dump
 	$(STRIP) $(INSTALL_DEST)/$(EXECUTABLE)
 	cp $(CMD_FILE) $(ETC_PATH)
 

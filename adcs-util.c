@@ -17,6 +17,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <ctype.h>
+#include <zlib.h>
 #include "adcs-telemetry.h"
 
 #define WAIT_MS (2 * 1000)
@@ -25,6 +26,9 @@ struct MulticallInfo;
 
 static int adcs_status(int, char**, struct MulticallInfo *);
 static int adcs_telemetry(int, char**, struct MulticallInfo *);
+static int adcs_get_cs(int, char**, struct MulticallInfo *);
+static int adcs_set_cs(int, char**, struct MulticallInfo *);
+static int adcs_read_dump(int, char**, struct MulticallInfo *);
 
 // struct holding all possible function calls
 // running the executable with the - flags will call that function
@@ -39,8 +43,94 @@ struct MulticallInfo {
        "Display the current status of the adcs process -S" }, 
    { &adcs_telemetry, "adcs-telemetry", "-T", 
        "Display the current KVP telemetry of the adcs process -T" }, 
+   { &adcs_get_cs, "adcs-get-cs", "-G", 
+       "Display the current values in the adcs critical state -G" }, 
+   { &adcs_set_cs, "adcs-set-cs", "-s", 
+       "Change the values in the adcs critical state -s" }, 
+   { &adcs_read_dump, "adcs-read-dump", "-R", 
+       "Read a dump file and convert into KVP -R" }, 
    { NULL, NULL, NULL, NULL }
 };
+
+static int adcs_read_dump(int argc, char **argv, struct MulticallInfo * self) 
+{
+   struct ADCSReaderLog entry;
+   gzFile inp;
+   int count = 0;
+
+   if (argc < 2) {
+      printf("Usage: %s <input file>\n", argv[0]);
+      return 0;
+   }
+
+   inp = gzopen(argv[1], "r");
+   if (!inp) {
+      printf("Failed to open %s\n", argv[1]);
+      return -1;
+   }
+
+   while (sizeof(entry) == gzread(inp, &entry, sizeof(entry))) {
+      count++;
+      printf("accel_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.accel.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("accel_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.accel.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("accel_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.accel.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("gyro_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.gyro.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("gyro_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.gyro.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("gyro_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.gyro.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("mag_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_mb.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("mag_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_mb.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("mag_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_mb.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("nz_mag_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_nz.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("nz_mag_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_nz.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("nz_mag_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_nz.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("pz_mag_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_pz.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("pz_mag_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_pz.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("pz_mag_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_pz.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("ny_mag_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_ny.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("ny_mag_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_ny.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("ny_mag_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_ny.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("py_mag_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_py.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("py_mag_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_py.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("py_mag_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_py.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("nx_mag_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_nx.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("nx_mag_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_nx.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("nx_mag_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_nx.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("px_mag_x=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_px.x),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("px_mag_y=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_px.y),
+         ntohl(entry.sec), ntohl(entry.usec));
+      printf("px_mag_z=%d,%u.%06u\n", (int32_t)ntohl(entry.status.mag_px.z),
+         ntohl(entry.sec), ntohl(entry.usec));
+   }
+
+   gzclose(inp);
+
+   return 0;
+}
 
 static int adcs_status(int argc, char **argv, struct MulticallInfo * self) 
 {
@@ -120,6 +210,120 @@ static int adcs_status(int argc, char **argv, struct MulticallInfo * self)
    printf("+Z Mag Y=%d [nT]\n", (int32_t)ntohl(resp.status.mag_pz.y));
    printf("+Z Mag Z=%d [nT]\n", (int32_t)ntohl(resp.status.mag_pz.z));
    
+   return 0;
+}
+
+#if 0
+#define DFL_HIGHRES_DELAY (60*60)
+#define DFL_HIGHRES_PERIOD (24*60*60)
+#define DFL_SAMPLE_PERIOD_MS 100
+#define DLF_SAMPLES (20*10)
+#endif
+static int adcs_set_cs(int argc, char **argv, struct MulticallInfo * self) 
+{
+   struct {
+      uint8_t cmd;
+      uint8_t res;
+   } __attribute__((packed)) resp;
+
+   struct {
+      uint8_t cmd;
+      struct CriticalState cs;
+   } __attribute__((packed)) send;
+
+   send.cmd = ADCS_SET_CS_CMD;
+   const char *ip = "127.0.0.1";
+   int len, opt;
+
+   send.cs.init_highres_delay = htonl(DFL_HIGHRES_DELAY);
+   send.cs.highres_period = htonl(DFL_HIGHRES_PERIOD);
+   send.cs.sample_cnt = htonl(DFL_SAMPLE_PERIOD_MS);
+   send.cs.sample_period_ms = htonl(DLF_SAMPLES);
+   
+   while ((opt = getopt(argc, argv, "h:d:p:c:s:")) != -1) {
+      switch(opt) {
+         case 'h':
+            ip = optarg;
+            break;
+         case 'd':
+            send.cs.init_highres_delay = htonl(atol(optarg));
+            break;
+         case 'p':
+            send.cs.highres_period = htonl(atol(optarg));
+            break;
+         case 'c':
+            send.cs.sample_cnt = htonl(atol(optarg));
+            break;
+         case 's':
+            send.cs.sample_period_ms = htonl(atol(optarg));
+            break;
+      }
+   }
+   
+   // send packet and wait for response
+   if ((len = socket_send_packet_and_read_response(ip, "adcs", &send, 
+    sizeof(send), &resp, sizeof(resp), WAIT_MS)) <= 0) {
+      return len;
+   }
+ 
+   if (resp.cmd != ADCS_SET_CS_RESP) {
+      printf("response code incorrect, Got 0x%02X expected 0x%02X\n", 
+       resp.cmd, ADCS_SET_CS_RESP);
+      return 5;
+   }
+
+   // print out returned values   
+   if (resp.res)
+      printf("Spacecraft reported an error setting critical state\n");
+
+   return 0;
+}
+
+static int adcs_get_cs(int argc, char **argv, struct MulticallInfo * self) 
+{
+   struct {
+      uint8_t cmd;
+      struct CriticalState cs;
+   } __attribute__((packed)) resp;
+
+   struct {
+      uint8_t cmd;
+   } __attribute__((packed)) send;
+
+   send.cmd = ADCS_GET_CS_CMD;
+   const char *ip = "127.0.0.1";
+   int len, opt;
+   
+   while ((opt = getopt(argc, argv, "h:")) != -1) {
+      switch(opt) {
+         case 'h':
+            ip = optarg;
+            break;
+      }
+   }
+   
+   // send packet and wait for response
+   if ((len = socket_send_packet_and_read_response(ip, "adcs", &send, 
+    sizeof(send), &resp, sizeof(resp), WAIT_MS)) <= 0) {
+      return len;
+   }
+ 
+   if (resp.cmd != ADCS_GET_CS_RESP) {
+      printf("response code incorrect, Got 0x%02X expected 0x%02X\n", 
+       resp.cmd, ADCS_GET_CS_RESP);
+      return 5;
+   }
+
+   // print out returned values   
+   printf("Delay before first high res dataset: %u [s]\n",
+       ntohl(resp.cs.init_highres_delay));
+   printf("Delay between high res datasets: %u [s]\n",
+       ntohl(resp.cs.highres_period));
+   printf("Number of samples in high res dataset: %u\n",
+       ntohl(resp.cs.sample_cnt));
+   printf("Time between samples: %u [ms]\n",
+       ntohl(resp.cs.sample_period_ms));
+
    return 0;
 }
 
