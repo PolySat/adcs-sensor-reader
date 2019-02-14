@@ -1,0 +1,112 @@
+--- old.cfg	2019-02-13 17:35:39.228813049 -0800
++++ new.cfg	2019-02-13 17:37:58.550167097 -0800
+@@ -97,4 +97,109 @@
+       GROUPS=adcs
+    </SENSOR>
+ 
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=nz_mag_x
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=nz_mag_y
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=nz_mag_z
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=ny_mag_x
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=ny_mag_y
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=ny_mag_z
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=py_mag_x
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=py_mag_y
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=py_mag_z
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=px_mag_x
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=px_mag_y
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=px_mag_z
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=nx_mag_x
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=nx_mag_y
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
++   <SENSOR>
++      NAME=adcs
++      SENSOR_KEY=nx_mag_z
++      LOCATION=adcs
++      GROUPS=adcs
++   </SENSOR>
++
+ </SUBPROCESS>

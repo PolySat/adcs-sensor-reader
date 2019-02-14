@@ -1,0 +1,3 @@
+#!/bin/sh                                                                                                                           
+KEY=ADCS_V2
+datalogger-schedule-sequence -i $KEY -s /s/run.seq -T 0 -h dave.calpoly.edu SCRIPT /s/run_once.sh A1 /data/adcs_v2.sh.gz A2 "$KEY" A3 " " A4 " " A5 " " A6 " " A7 " " A8 " " A9 " " A10 " " A11 " " A12 " "
