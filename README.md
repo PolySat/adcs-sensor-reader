@@ -1,7 +1,7 @@
 # ADCS Sensor Reader
 
 For PolySat missions without attidute control, we use this process to mock out the ADCS status command.
-This interfaces with the rest of the system to provide gyroscope, accelerometer, and magnatometer readings
+This interfaces with the rest of the system to provide gyroscope, accelerometer, and magnetometer readings
 from satellite side pannels and Intrepid board.
 
 This is a simple process that makes it ideal for learning how to build process that interface with
