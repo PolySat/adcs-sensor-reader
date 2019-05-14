@@ -5,10 +5,10 @@ override CFLAGS+=-Wall -pedantic -std=gnu99 -g -lpthread
 
 SRC=adcs.c
 OBJS=$(SRC:.c=.o)
-EXECUTABLE=adcs
-CMDS=adcs-util
+EXECUTABLE=adcs-sensor-reader
+CMDS=adcs-sensor-reader-util
 INSTALL_DEST=$(BIN_PATH)
-CMD_FILE=adcs.cmd.cfg
+CMD_FILE=adcs-sensor-reader.cmd.cfg
 
 all: $(EXECUTABLE) $(CMDS)
 
@@ -16,7 +16,7 @@ $(EXECUTABLE): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 	$(STRIP) $@
 
-adcs-util: adcs-util.c
+adcs-sensor-reader-util: adcs-util.c
 	$(CC) $(CFLAGS) $< -lproc -lsatpkt -ldl -o $@
 	$(STRIP) $@
 

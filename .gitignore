@@ -1,4 +1,4 @@
 *.o
-adcs
-adcs-util
+adcs-sensor-reader
+adcs-sensor-reader-util
 .*.swp
