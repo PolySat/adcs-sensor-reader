@@ -32,8 +32,8 @@ struct MulticallInfo;
 static int adcs_status(int, char**, struct MulticallInfo *);
 static int adcs_telemetry(int, char**, struct MulticallInfo *);
 static int adcs_datalogger(int argc, char **argv, struct MulticallInfo *);
-static int adcs_sensor_metadata(int argc, char **argv);
-static int adcs_json_telem(int argc, char **argv);
+static int adcs_sensor_metadata(int argc, char **argv, struct MulticallInfo *);
+static int adcs_json_telem(int argc, char **argv, struct MulticallInfo *);
 
 
 // struct holding all possible function calls
@@ -51,7 +51,7 @@ struct MulticallInfo {
        "Display the current KVP telemetry of the adcs process -T" }, 
    { &adcs_datalogger, "adcs-datalogger", "-dl", 
        "Print a list of sensors supported by the -telemetry app in a format suitable for datalogger"},
-   { &adcs_sensor_metadata, "adcs-sensor-metadata", "-meta", 
+   { &adcs_sensor_metadata, "adcs-sensor-metadata", "-meta",
                        "Print a list of sensors supported by the -telemetry app in a format suitable for use with the ground-based telemetry database"},
    { &adcs_json_telem, "adcs-json-telem", "-json", 
                        "Print an JSON telemetry dictionary"},
@@ -245,11 +245,11 @@ static int adcs_datalogger(int argc, char **argv, struct MulticallInfo * self)
    return TELM_print_datalogger_info(telemetryPoints, "adcs-sensor-reader", DFL_TELEM_PATH, argc, argv);
 }
 
-static int adcs_sensor_metadata(int argc, char **argv)
+static int adcs_sensor_metadata(int argc, char **argv, struct MulticallInfo *)
 {
    return TELM_print_sensor_metadata(telemetryPoints, events);
 }
-static int adcs_json_telem(int argc, char **argv)
+static int adcs_json_telem(int argc, char **argv, struct MulticallInfo *)
 {
    return TELM_print_json_telem_dict(telemetryPoints, events, argc, argv);
 }
