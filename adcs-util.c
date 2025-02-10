@@ -31,9 +31,9 @@ struct MulticallInfo;
 
 static int adcs_status(int, char**, struct MulticallInfo *);
 static int adcs_telemetry(int, char**, struct MulticallInfo *);
-static int adcs_datalogger(int argc, char **argv, struct MulticallInfo *);
-static int adcs_sensor_metadata(int argc, char **argv, struct MulticallInfo *);
-static int adcs_json_telem(int argc, char **argv, struct MulticallInfo *);
+static int adcs_datalogger(int, char**, struct MulticallInfo *);
+static int adcs_sensor_metadata(int, char **, struct MulticallInfo *);
+static int adcs_json_telem(int, char **, struct MulticallInfo *);
 
 
 // struct holding all possible function calls
@@ -245,11 +245,11 @@ static int adcs_datalogger(int argc, char **argv, struct MulticallInfo * self)
    return TELM_print_datalogger_info(telemetryPoints, "adcs-sensor-reader", DFL_TELEM_PATH, argc, argv);
 }
 
-static int adcs_sensor_metadata(int argc, char **argv, struct MulticallInfo *)
+static int adcs_sensor_metadata(int argc, char **argv, struct MulticallInfo * self)
 {
    return TELM_print_sensor_metadata(telemetryPoints, events);
 }
-static int adcs_json_telem(int argc, char **argv, struct MulticallInfo *)
+static int adcs_json_telem(int argc, char **argv, struct MulticallInfo * self)
 {
    return TELM_print_json_telem_dict(telemetryPoints, events, argc, argv);
 }
