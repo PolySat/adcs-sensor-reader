@@ -24,7 +24,7 @@
 #ifdef BR_TELEM_PATH
 #define DFL_TELEM_PATH BR_TELEM_PATH
 #else
-#define DFL_TELEM_PATH "adcs-telem"
+#define DFL_TELEM_PATH "/usr/bin/adcs-sensor-reader-util"
 #endif
 
 struct MulticallInfo;
@@ -32,6 +32,9 @@ struct MulticallInfo;
 static int adcs_status(int, char**, struct MulticallInfo *);
 static int adcs_telemetry(int, char**, struct MulticallInfo *);
 static int adcs_datalogger(int argc, char **argv, struct MulticallInfo *);
+static int adcs_sensor_metadata(int argc, char **argv);
+static int adcs_json_telem(int argc, char **argv);
+
 
 // struct holding all possible function calls
 // running the executable with the - flags will call that function
@@ -46,8 +49,13 @@ struct MulticallInfo {
        "Display the current status of the adcs process -S" }, 
    { &adcs_telemetry, "adcs-telemetry", "-T", 
        "Display the current KVP telemetry of the adcs process -T" }, 
-   {&adcs_datalogger, "adcs-datalogger", "-dl", 
+   { &adcs_datalogger, "adcs-datalogger", "-dl", 
        "Print a list of sensors supported by the -telemetry app in a format suitable for datalogger"},
+   { &adcs_sensor_metadata, "adcs-sensor-metadata", "-meta", 
+                       "Print a list of sensors supported by the -telemetry app in a format suitable for use with the ground-based telemetry database"},
+   { &adcs_json_telem, "adcs-json-telem", "-json", 
+                       "Print an JSON telemetry dictionary"},
+
 
    { NULL, NULL, NULL, NULL }
 };
@@ -132,6 +140,11 @@ static int adcs_status(int argc, char **argv, struct MulticallInfo * self)
    
    return 0;
 }
+
+static struct TELMEventInfo events[] = {
+   { 0, 0, NULL, NULL }
+};
+
 
 struct TELMTelemetryInfo telemetryPoints[] = {
    { "accel_x", "motherboard", "software", "G", 1, 0,
@@ -231,6 +244,16 @@ static int adcs_datalogger(int argc, char **argv, struct MulticallInfo * self)
 {
    return TELM_print_datalogger_info(telemetryPoints, "adcs-sensor-reader", DFL_TELEM_PATH, argc, argv);
 }
+
+static int adcs_sensor_metadata(int argc, char **argv)
+{
+   return TELM_print_sensor_metadata(telemetryPoints, events);
+}
+static int adcs_json_telem(int argc, char **argv)
+{
+   return TELM_print_json_telem_dict(telemetryPoints, events, argc, argv);
+}
+
 
 /* get telemetry from ADCS process
  * @param argc number of command line arguments
