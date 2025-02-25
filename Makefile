@@ -8,7 +8,7 @@ OBJS=$(SRC:.c=.o)
 EXECUTABLE=adcs-sensor-reader
 CMDS=adcs-sensor-reader-util
 INSTALL_DEST=$(BIN_PATH)
-CMD_FILE=adcs-sensor-reader.cmd.cfg
+CMD_FILE=adcs.cmd.cfg
 
 all: $(EXECUTABLE) $(CMDS)
 
