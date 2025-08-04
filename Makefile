@@ -23,8 +23,8 @@ adcs-sensor-reader-util: adcs-util.c
 install: $(EXECUTABLE) $(CMDS)
 	cp -f $(EXECUTABLE) $(INSTALL_DEST)
 	cp -f $(CMDS) $(INSTALL_DEST)
-	ln -sf adcs-util $(INSTALL_DEST)/adcs-status
-	ln -sf adcs-util $(INSTALL_DEST)/adcs-telemetry
+	ln -sf adcs-sensor-reader-util $(INSTALL_DEST)/adcs-sensor-reader-status
+	ln -sf adcs-sensor-reader-util $(INSTALL_DEST)/adcs-sensor-reader-telemetry
 	$(STRIP) $(INSTALL_DEST)/$(EXECUTABLE)
 	cp $(CMD_FILE) $(ETC_PATH)
 
