@@ -1,6 +1,6 @@
 # ADCS Sensor Reader
 
-For PolySat missions without attitude control, we use this process to mock out the ADCS status command.
+For PolySat missions without attidute control, we use this process to mock out the ADCS status command.
 This interfaces with the rest of the system to provide gyroscope, accelerometer, and magnetometer readings
 from satellite side pannels and Intrepid board.
 
@@ -21,8 +21,8 @@ using `make TARGET=arm`.
 You can run this process by running the executable, `./adcs-sensor-reader`.
 
 After starting the process, you can call it with the adcs util program.
-Give `./adcs--util -S` and `./adcs-util -T` a try!
-The command `./adcs-util -dl` will print a datalogger sensor config file.
+Give `./adcs-sesor-reader-util -S` and `./adcs-sensor-reader-util -T` a try!
+The command `./adcs-sensor-reader-util -dl` will print a datalogger sensor config file.
 
 If the process is running on an different computer, like an Intrepid board, you can supply the process IP with the `-h` flag.
 
