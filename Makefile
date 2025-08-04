@@ -6,7 +6,7 @@ override CFLAGS+=-Wall -pedantic -std=gnu99 -g -lpthread
 SRC=adcs.c
 OBJS=$(SRC:.c=.o)
 EXECUTABLE=adcs-sensor-reader
-CMDS=adcs-sensor-reader-util
+CMDS=adcs-util
 INSTALL_DEST=$(BIN_PATH)
 CMD_FILE=adcs.cmd.cfg
 
@@ -16,7 +16,7 @@ $(EXECUTABLE): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(LDFLAGS)
 	$(STRIP) $@
 
-adcs-sensor-reader-util: adcs-util.c
+adcs-util: adcs-util.c
 	$(CC) $(CFLAGS) $< -lproc -lsatpkt -ldl -o $@
 	$(STRIP) $@
 
