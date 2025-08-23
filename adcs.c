@@ -212,14 +212,15 @@ static void marshal_sensors_legacy(void *dst)
    }
 }
 
-static void adcs_status(struct ProcessData *proc,
-               struct IPC_Command *cmd, struct sockaddr_in *src, void *arg, int fd)
+static void adcs_status_populator(void *arg, XDR_tx_struct cb,
+                  void *cb_args)
 {
    struct IPC_ADCS_Status status;
    memset(&status, 0, sizeof(status));
+
    marshal_sensors(&status);
 
-   IPC_response(proc, cmd, IPC_ADCS_TYPES_STATUS, &status, src);
+   cb(&status, cb_args, IPC_RESULTCODE_SUCCESS);
 }
 
 void adcs_status_legacy(int socket, unsigned char cmd, void * data,
@@ -324,7 +325,8 @@ int main(int argc, char *argv[])
 
    initialize_cfged_sensors(sensors);
 
-   CMD_set_xdr_cmd_handler(IPC_CMDS_STATUS, &adcs_status, adcs.proc);
+   XDR_register_populator(&adcs_status_populator, adcs.proc,
+         IPC_ADCS_TYPES_STATUS);
 
    // Enter the main event loop
    EVT_start_loop(PROC_evt(adcs.proc));
