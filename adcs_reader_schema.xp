@@ -1,0 +1,112 @@
+namespace adcs {
+   location "motherboard";
+   subsystem "adcs";
+   lproc_name "adcs";
+   lproc_port 50011;
+};
+
+const CMD_BASE =       0x200;
+const TYPE_BASE = 0x01000200;
+const ERR_BASE =  0x02000200;
+
+enum types {
+   STATUS = TYPE_BASE + 0,
+   VECTOR = TYPE_BASE + 1
+};
+
+struct Vector {
+   int x {
+      key x;
+      name "X Element";
+      leaf-only;
+   };
+   int y {
+      key y;
+      name "Y Element";
+      leaf-only;
+   };
+   int z {
+      key z;
+      name "Z Element";
+      leaf-only;
+   };
+} = types::VECTOR;
+
+struct Status {
+   Vector accel {
+      key accel;
+      name "Accelerometer";
+      description "Motherboard accelerometer readings";
+      unit "G";
+      fractional_bits 24;
+   };
+
+   Vector gyro {
+      key gyro;
+      name "Gyroscope";
+      description "Motherboard gyroscope readings";
+      unit "deg/sec";
+      fractional_bits 20;
+   };
+
+   Vector mag_mb {
+      key mag_mb;
+      name "MB Magnetometer";
+      description "Motherboard magnetometer readings";
+      unit "nT";
+   };
+
+   Vector mag_nx {
+      key mag_nx;
+      name "-X Magnetometer";
+      description "-X magnetometer readings";
+      unit "nT";
+   };
+
+   Vector mag_px {
+      key mag_px;
+      name "+X Magnetometer";
+      description "+X magnetometer readings";
+      unit "nT";
+   };
+
+   Vector mag_ny {
+      key mag_ny;
+      name "-Y Magnetometer";
+      description "-Y magnetometer readings";
+      unit "nT";
+   };
+
+   Vector mag_py {
+      key mag_py;
+      name "+Y Magnetometer";
+      description "+Y magnetometer readings";
+      unit "nT";
+   };
+
+   Vector mag_nz {
+      key mag_nz;
+      name "-Z Magnetometer";
+      description "-Z magnetometer readings";
+      unit "nT";
+   };
+
+   Vector mag_pz {
+      key mag_pz;
+      name "+Z Magnetometer";
+      description "+Z magnetometer readings";
+      unit "nT";
+   };
+
+} = types::STATUS;
+
+command "adcs-status" {
+      summary "Reports the general health status of the adcs process";
+      datalogger {
+         struct Status;
+         subprocess {
+            path "/usr/bin/adcs-status";
+            param "-f kvp";
+         };
+      };
+} = IPC::CMDS::STATUS;

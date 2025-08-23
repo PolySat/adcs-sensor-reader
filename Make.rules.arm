@@ -22,3 +22,4 @@ else
         CFLAGS+=-I$(ARM_TOOLCHAIN_PATH)/include -I$(ARM_TOOLCHAIN_PATH)/local/include
         LDFLAGS+=-L$(ARM_TOOLCHAIN_PATH)/lib -L$(ARM_TOOLCHAIN_PATH)/local/lib
 endif
+SO_EXT=so

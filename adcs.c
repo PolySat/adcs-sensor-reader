@@ -22,6 +22,7 @@
 #include <errno.h>
 #include <ctype.h>
 
+#include "polypkt/adcs-sensor-reader-pkt.h"
 #include "adcs-telemetry.h"
 
 struct ADCSState {
@@ -45,7 +46,9 @@ struct SensorInfo {
    const char *location;
    const char *type;
    int flags;
+   void (*marshal_legacy)(struct SensorInfo *sensor, void *dst);
    void (*marshal)(struct SensorInfo *sensor, void *dst);
+   int legacy_offset;
    int offset;
    struct Sensor *sensor;
    struct DeviceInfo *dev_info;
@@ -54,23 +57,29 @@ struct SensorInfo {
 
 // Declarations of functions that read sensor values and pack them
 //  into status response
-static void marshal_accel(struct SensorInfo *si, void *dst);
-static void marshal_gyro(struct SensorInfo *si, void *dst);
-static void marshal_mag(struct SensorInfo *si, void *dst);
+static void marshal_accel_xdr(struct SensorInfo *si, void *dst);
+static void marshal_gyro_xdr(struct SensorInfo *si, void *dst);
+static void marshal_mag_xdr(struct SensorInfo *si, void *dst);
+static void marshal_accel_legacy(struct SensorInfo *si, void *dst);
+static void marshal_gyro_legacy(struct SensorInfo *si, void *dst);
+static void marshal_mag_legacy(struct SensorInfo *si, void *dst);
 
 #define ACCEL_SENSOR(n,l,field) { n, l, DRVR_CLS_ACCELEROMETER, \
-    ACCEL_TYPE_FLAG, &marshal_accel, \
+    ACCEL_TYPE_FLAG, &marshal_accel_legacy, &marshal_accel_xdr, \
     offsetof(struct ADCSReaderStatus, field), \
+    offsetof(struct IPC_ADCS_Status, field), \
     NULL, NULL, 0 }
 
 #define GYRO_SENSOR(n,l,field) { n, l, DRVR_CLS_GYROSCOPE, \
-    GYRO_TYPE_FLAG, &marshal_gyro, \
+    GYRO_TYPE_FLAG, &marshal_gyro_legacy, &marshal_gyro_xdr, \
     offsetof(struct ADCSReaderStatus, field), \
+    offsetof(struct IPC_ADCS_Status, field), \
     NULL, NULL, 0 }
 
 #define MAG_SENSOR(n,l,field) { n, l, DRVR_CLS_MAGNETOMETER, \
-    MAG_TYPE_FLAG, &marshal_mag, \
+    MAG_TYPE_FLAG, &marshal_mag_legacy, &marshal_mag_xdr, \
     offsetof(struct ADCSReaderStatus, field), \
+    offsetof(struct IPC_ADCS_Status, field), \
     NULL, NULL, 0 }
 
 // Sensors managed by this process
@@ -84,10 +93,10 @@ struct SensorInfo sensors[] = {
    MAG_SENSOR("Magnetometer", DEVICE_LOCATION_PLUS_Y, mag_py),
    MAG_SENSOR("Magnetometer", DEVICE_LOCATION_MINUS_X, mag_nx),
    MAG_SENSOR("Magnetometer", DEVICE_LOCATION_PLUS_X, mag_px),
-   { NULL, NULL, NULL, 0, NULL, 0, NULL, NULL, 0 }
+   { NULL, NULL, NULL, 0, NULL, NULL, 0, 0, NULL, NULL, 0 }
 };
 
-static void marshal_accel(struct SensorInfo *si, void *dst)
+static void marshal_accel_legacy(struct SensorInfo *si, void *dst)
 {
    struct AccelerometerSensor *accel = (struct AccelerometerSensor*)si->sensor;
    struct ADCS3DData *ad = (struct ADCS3DData*)dst;
@@ -100,12 +109,24 @@ static void marshal_accel(struct SensorInfo *si, void *dst)
       ad->y = htonl(accelCache.y_result);
       ad->z = htonl(accelCache.z_result);
    }
-   // ad->x = htonl(accel->accelCache.x_result);
-   // ad->y = htonl(accel->accelCache.y_result);
-   // ad->z = htonl(accel->accelCache.z_result);
 }
 
-static void marshal_gyro(struct SensorInfo *si, void *dst)
+static void marshal_accel_xdr(struct SensorInfo *si, void *dst)
+{
+   struct AccelerometerSensor *accel = (struct AccelerometerSensor*)si->sensor;
+   struct IPC_ADCS_Vector *vec = (struct IPC_ADCS_Vector*)dst;
+   AccelData accelCache;
+
+   if (accel->read) {
+      accel->read(accel, &accelCache);
+
+      vec->x = accelCache.x_result;
+      vec->y = accelCache.y_result;
+      vec->z = accelCache.z_result;
+   }
+}
+
+static void marshal_gyro_legacy(struct SensorInfo *si, void *dst)
 {
    struct GyroscopeSensor *gyro = (struct GyroscopeSensor*)si->sensor;
    struct ADCS3DData *gd = (struct ADCS3DData*)dst;
@@ -120,7 +141,22 @@ static void marshal_gyro(struct SensorInfo *si, void *dst)
    }
 }
 
-static void marshal_mag(struct SensorInfo *si, void *dst)
+static void marshal_gyro_xdr(struct SensorInfo *si, void *dst)
+{
+   struct GyroscopeSensor *gyro = (struct GyroscopeSensor*)si->sensor;
+   struct IPC_ADCS_Vector *vec = (struct IPC_ADCS_Vector*)dst;
+   GyroData data;
+
+   if (gyro->read) {
+      if (gyro->read(gyro, &data) >= 0) {
+         vec->x = data.x;
+         vec->y = data.y;
+         vec->z = data.z;
+      }
+   }
+}
+
+static void marshal_mag_legacy(struct SensorInfo *si, void *dst)
 {
    struct MagnetometerSensor *mag = (struct MagnetometerSensor*)si->sensor;
    struct ADCS3DData *md = (struct ADCS3DData*)dst;
@@ -128,6 +164,16 @@ static void marshal_mag(struct SensorInfo *si, void *dst)
    md->x = htonl(mag->magnetometerCache.x_result);
    md->y = htonl(mag->magnetometerCache.y_result);
    md->z = htonl(mag->magnetometerCache.z_result);
+}
+
+static void marshal_mag_xdr(struct SensorInfo *si, void *dst)
+{
+   struct MagnetometerSensor *mag = (struct MagnetometerSensor*)si->sensor;
+   struct IPC_ADCS_Vector *vec = (struct IPC_ADCS_Vector*)dst;
+
+   vec->x = mag->magnetometerCache.x_result;
+   vec->y = mag->magnetometerCache.y_result;
+   vec->z = mag->magnetometerCache.z_result;
 }
 
 // Read all the sensors and place their values into the status packet
@@ -148,14 +194,42 @@ static void marshal_sensors(void *dst)
    }
 }
 
-void adcs_status(int socket, unsigned char cmd, void * data,
+// Read all the sensors and place their values into the status packet
+static void marshal_sensors_legacy(void *dst)
+{
+   struct SensorInfo *curr;
+   struct timeval now;
+
+   gettimeofday(&now, NULL);
+   for (curr = sensors; curr->name; curr++) {
+      if (curr->legacy_offset < 0 || !curr->sensor || !curr->marshal)
+         continue;
+
+      if (curr->sensor->update_cached_values)
+         curr->sensor->update_cached_values(curr->sensor, &now);
+
+      curr->marshal(curr, ((char*)dst) + curr->legacy_offset);
+   }
+}
+
+static void adcs_status(struct ProcessData *proc,
+               struct IPC_Command *cmd, struct sockaddr_in *src, void *arg, int fd)
+{
+   struct IPC_ADCS_Status status;
+   memset(&status, 0, sizeof(status));
+   marshal_sensors(&status);
+
+   IPC_response(proc, cmd, IPC_ADCS_TYPES_STATUS, &status, src);
+}
+
+void adcs_status_legacy(int socket, unsigned char cmd, void * data,
    size_t dataLen, struct sockaddr_in * src)
 {
    struct ADCSReaderStatus status;
    struct ADCSState *adcs = gState;
 
    memset(&status, 0, sizeof(status));
-   marshal_sensors(&status);
+   marshal_sensors_legacy(&status);
 
    PROC_cmd_sockaddr(adcs->proc, CMD_STATUS_RESPONSE, &status,
                sizeof(status), src);
@@ -229,12 +303,14 @@ int main(int argc, char *argv[])
 {
    struct ADCSState adcs;
 
+   IPC_ADCS_forcelink();
+
    // initialize state structure
    memset(&adcs, 0, sizeof(adcs));
    gState = &adcs;
 
    // Initialize the process
-   adcs.proc = PROC_init("adcs", WD_ENABLED);
+   adcs.proc = PROC_init("adcs", WD_XDR);
    if (!adcs.proc)
       return -1;
 
@@ -247,6 +323,8 @@ int main(int argc, char *argv[])
    PROC_signal(adcs.proc, SIGINT, &sigint_handler, adcs.proc);
 
    initialize_cfged_sensors(sensors);
+
+   CMD_set_xdr_cmd_handler(IPC_CMDS_STATUS, &adcs_status, adcs.proc);
 
    // Enter the main event loop
    EVT_start_loop(PROC_evt(adcs.proc));

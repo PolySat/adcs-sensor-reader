@@ -21,9 +21,8 @@ using `make TARGET=arm`.
 You can run this process by running the executable, `./adcs-sensor-reader`.
 
 After starting the process, you can call it with the adcs util program.
-Give `./adcs-sesor-reader-util -S` and `./adcs-sensor-reader-util -T` a try!
-The command `./adcs-sensor-reader-util -dl` will print a datalogger sensor config file.
+Give `./adcs-util` a try!
 
 If the process is running on an different computer, like an Intrepid board, you can supply the process IP with the `-h` flag.
 
-For example, `./adcs-util -S -h 10.42.42.42` calls a payload process running at `10.42.42.42`.
+For example, `./adcs-util -h 10.42.42.42` calls a payload process running at `10.42.42.42`.
