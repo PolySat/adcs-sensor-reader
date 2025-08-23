@@ -46,7 +46,7 @@ $(PKT_LIB): $(PKT_LIB_C_SRC).c
 install: $(EXECUTABLE) install-polypkt $(CMDS)
 	cp -f $(EXECUTABLE) $(INSTALL_DEST)
 	cp -f $(CMDS) $(INSTALL_DEST)
-	ln -sf adcs-util $(INSTALL_DEST)/adcs-status
+	ln -sf adcs-sensor-reader-util $(INSTALL_DEST)/adcs-status
 	$(STRIP) $(INSTALL_DEST)/$(EXECUTABLE)
 
 install-polypkt: $(PKT_LIB)
