@@ -102,6 +102,7 @@ struct Status {
 
 command "adcs-status" {
       summary "Reports the general health status of the adcs process";
+      types = types::STATUS;
       datalogger {
          struct Status;
          subprocess {
@@ -109,4 +110,4 @@ command "adcs-status" {
             param "-f kvp";
          };
       };
-} = IPC::CMDS::STATUS;
+};
