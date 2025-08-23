@@ -8,7 +8,6 @@ OBJS=$(SRC:.c=.o)
 EXECUTABLE=adcs-sensor-reader
 CMDS=adcs-sensor-reader-util
 INSTALL_DEST=$(BIN_PATH)
-CMD_FILE=adcs-sensor-reader.cmd.cfg
 XDRGEN?=poly-xdrgen
 
 # Packet Library Build Variables
@@ -49,7 +48,6 @@ install: $(EXECUTABLE) install-polypkt $(CMDS)
 	cp -f $(CMDS) $(INSTALL_DEST)
 	ln -sf adcs-util $(INSTALL_DEST)/adcs-status
 	$(STRIP) $(INSTALL_DEST)/$(EXECUTABLE)
-	cp $(CMD_FILE) $(ETC_PATH)
 
 install-polypkt: $(PKT_LIB)
 	install -d $(INC_PATH)/polypkt
